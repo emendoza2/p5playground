@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Code Editor: p5.js</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel=stylesheet href="styles/style.css">
+
+  <link rel=stylesheet href="styles/lib/codemirror.css">
+  <link rel="stylesheet" href="styles/theme/ambiance.css">
+  <link rel="stylesheet" href="styles/theme/blackboard.css">
+  <link rel="stylesheet" href="styles/theme/cobalt.css">
+  <link rel="stylesheet" href="styles/theme/elegant.css">
+  <link rel="stylesheet" href="styles/theme/material.css">
+  <link rel="stylesheet" href="styles/theme/mdn-like.css">
+  <link rel="stylesheet" href="styles/theme/midnight.css">
+  <link rel="stylesheet" href="styles/theme/oceanic-next.css">
+  <link rel="stylesheet" href="styles/theme/solarized.css">
+  <script src=scripts/require.js></script>
+  <style type=text/css>
+    .CodeMirror {
+      float: left;
+      width: 50%;
+      border: 0.5px solid lightgray;
+      border-radius: 5px 0 0 5px;
+      font-size: 1.1rem;
+      height: 400px;
+    }
+    #previewDiv {
+      float: left;
+      position: relative;
+      height: 400px;
+      width: 390px;
+      border: 0.5px solid lightgray;
+      border-left: 0px;
+      overflow: hidden;
+      border-radius: 0 5px 5px 0;
+    }
+    iframe {
+      /* width: 49%; */
+      /* width: 1000px; */
+      
+      /* height: 1000px; */
+      /* min-height: 100%;
+      min-width: 100%; */
+      position: absolute;
+      right: 0;
+      width: 400px;
+      height: 400px;
+    }
+  </style>
+</head>
+
+<body>
+  <article>
+    <h2>Code Editor</h2>
+
+    <textarea id=code name=code type="text/javascript">
+function setup() { 
+  createCanvas(400, 400);
+  console.log('Hello World'); 
+} 
+function draw() { 
+  background(40, 40, 50); 
+}
+    </textarea>
+    <div id="previewDiv"><iframe id=preview scrolling=no sandbox="allow-scripts allow-same-origin" seamless frameborder="0"></iframe></div>
+    
+    <div style="clear:both"></div>
+    <select id=select>
+        <option selected>default</option>
+        <option>ambiance</option>
+        <option>blackboard</option>
+        <option>cobalt</option>
+        <option>elegant</option>
+        <option>material</option>
+        <option>mdn-like</option>
+        <option>midnight</option>
+        <option>oceanic-next</option>
+        <option>solarized dark</option>
+        <option>solarized light</option>
+    </select>
+    <script>
+      require([
+        "scripts/lib/codemirror", "scripts/mode/javascript/javascript"
+      ], function (CodeMirror) {
+        var editor = CodeMirror.fromTextArea(document.getElementById('code'), {
+          lineNumbers: true,
+          mode: "javascript"
+        });
+
+        var delay;
+        editor.on("change", function () {
+          clearTimeout(delay);
+          delay = setTimeout(updatePreview, 300);
+        });
+
+        function updatePreview() {
+          var previewFrame = document.getElementById('preview');
+          var preview = previewFrame.contentDocument || previewFrame.contentWindow.document;
+          var location = previewFrame.location || previewFrame.contentLocation || previewFrame.contentWindow.location;
+          location.reload();
+          preview.open();
+          preview.write('<!DOCTYPE html><head><style>html,body{margin:0;padding:0}</style></' +
+            'head><html><body><script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.1/p5.min.js" crossorigin=""></' +
+            'script><script>' + editor.getValue() + '<' + '/script></' + 'body></html>');
+          preview.close();
+        }
+        setTimeout(updatePreview, 300);
+        
+        var input = document.getElementById("select");
+        input.onchange = selectTheme;
+        function selectTheme() {
+          var theme = input.options[input.selectedIndex].textContent;
+          editor.setOption("theme", theme);
+          location.hash = "#" + theme;
+        }
+        var choice = (location.hash && location.hash.slice(1)) ||
+                    (document.location.search &&
+                      decodeURIComponent(document.location.search.slice(1)));
+        if (choice) {
+          input.value = choice;
+          editor.setOption("theme", choice);
+        }
+        CodeMirror.on(window, "hashchange", function() {
+          var theme = location.hash.slice(1);
+          if (theme) { input.value = theme; selectTheme(); }
+        });
+      });
+    </script>
+  </article>
+</body>
+
+</html>
