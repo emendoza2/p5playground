@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pastes extends Model
 {
-    use SoftDeletes;
+    use \Illuminate\Database\Eloquent\SoftDeletes;
 
     /**
      * The attributes that should be cast as Carbon dates
