@@ -17,8 +17,14 @@ class PasteController extends Controller
 
     public function __invoke($name)
     {
+        
+        $paste = \App\Pastes::where('unique_name', '=', $name)->value('content');
+        return view('paste', ['name' => $name, 'content' => $paste]);
 
-        return view('paste', ['name' => $name]);
+    }
+
+    public function save()
+    {
 
     }
 }

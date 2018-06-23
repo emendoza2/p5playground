@@ -5,9 +5,12 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-require('./bootstrap');
+import './bootstrap';
 
-window.Vue = require('vue');
+import CodeMirror from 'codemirror';
+import 'codemirror/mode/javascript/javascript';
+
+import Vue from 'vue';
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -19,4 +22,53 @@ Vue.component('example-component', require('./components/ExampleComponent.vue'))
 
 const app = new Vue({
     el: '#app'
+});
+
+var editor = CodeMirror.fromTextArea(document.getElementById('code'), {
+    lineNumbers: true,
+    mode: "text/javascript"
+});
+
+var delay;
+editor.on("change", function () {
+    clearTimeout(delay);
+    delay = setTimeout(updatePreview, 300);
+});
+
+function updatePreview() {
+    var previewFrame = document.getElementById('preview');
+    var preview = previewFrame.contentDocument || previewFrame.contentWindow.document;
+    var location = previewFrame.location || previewFrame.contentLocation || previewFrame.contentWindow.location;
+    location.reload();
+    preview.open();
+    preview.write('<!DOCTYPE html><head><style>html,body{margin:0;padding:0}</style></' +
+        'head><html><body><script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.6.1/p5.min.js" crossorigin=""></' +
+        'script><script>' + editor.getValue() + '<' + '/script></' + 'body></html>');
+    preview.close();
+}
+setTimeout(updatePreview, 300);
+
+var input = document.getElementById("select");
+input.onchange = selectTheme;
+
+function selectTheme() {
+    var theme = input.options[input.selectedIndex].textContent;
+    editor.setOption("theme", theme);
+    location.hash = "#" + theme;
+}
+
+var choice = (location.hash && location.hash.slice(1)) ||
+    (document.location.search &&
+        decodeURIComponent(document.location.search.slice(1)));
+if (choice) {
+    input.value = choice;
+    editor.setOption("theme", choice);
+}
+
+CodeMirror.on(window, "hashchange", function () {
+    var theme = location.hash.slice(1);
+    if (theme) {
+        input.value = theme;
+        selectTheme();
+    }
 });
