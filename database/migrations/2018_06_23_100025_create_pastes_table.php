@@ -17,6 +17,7 @@ class CreatePastesTable extends Migration
             $table->increments('id');
             $table->string('unique_name');
             $table->text('content');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
