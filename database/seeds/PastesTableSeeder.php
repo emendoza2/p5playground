@@ -11,6 +11,10 @@ class PastesTableSeeder extends Seeder
      */
     public function run()
     {
-        //
+        \App\Pastes::truncate();
+
+        (new Faker\Generator)->seed(234);
+
+        factory(App\Pastes::class, 25)->create();
     }
 }
