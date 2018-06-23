@@ -14,7 +14,7 @@
                               <th>Character</th>
                               <th>Real Name</th>
                           </tr>
-                          @foreach($characters as $key => $value)
+                          @foreach($actors as $key => $value)
                             <tr>
                               <td>{{ $key }}</td><td>{{ $value }}</td>
                             </tr>

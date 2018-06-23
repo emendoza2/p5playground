@@ -16,3 +16,9 @@ Route::get('/', 'ListController@show');
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('/got', [
+    'middleware' => ['auth'],
+    'uses' => function () {
+     echo "You are allowed to view this page!";
+    }]);
