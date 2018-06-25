@@ -48,7 +48,6 @@
                 width: calc(100% - 400px);
                 border-right: 0.5px solid lightgray;
                 border-bottom: 0.5px solid lightgray;
-                /* border-radius: 5px 0 0 5px; */
                 font-size: 1.1rem;
                 height: 100vh;
             }
@@ -60,15 +59,19 @@
                 width: 400px;
                 border-bottom: 0.5px solid lightgray;
                 overflow: hidden;
+                display: -webkit-box;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-align: center;
+                    -ms-flex-align: center;
+                        align-items: center;
+                justify-content: center;
             }
 
-            iframe#preview {
-                position: absolute;
+            #preview {
                 right: 0;
                 width: 400px;
                 height: 400px;
-                top: 50%;
-                margin-top: -200px;
             }
 
             button {

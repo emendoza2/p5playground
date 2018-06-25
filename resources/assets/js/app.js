@@ -9,6 +9,10 @@ import './bootstrap';
 
 import CodeMirror from 'codemirror';
 import 'codemirror/mode/javascript/javascript';
+import {JSHINT} from 'jshint'; window.JSHINT = JSHINT;
+import 'codemirror/addon/lint/lint';
+import 'codemirror/addon/lint/javascript-lint';
+import 'codemirror/addon/lint/lint.css';
 
 import Vue from 'vue';
 
@@ -18,16 +22,18 @@ import Vue from 'vue';
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.component('example-component', require('./components/ExampleComponent.vue'));
+// Vue.component('example-component', require('./components/ExampleComponent.vue'));
 
-const app = new Vue({
-    el: '#app'
-});
+// const app = new Vue({
+//     el: '#app'
+// });
 
-var editor = CodeMirror.fromTextArea(document.getElementById('code'), {
+var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
     lineNumbers: true,
-    mode: "text/javascript"
-});
+    mode: "javascript",
+    gutters: ["CodeMirror-lint-markers"],
+    lint: true
+  });
 
 var delay;
 editor.on("change", function () {
@@ -36,7 +42,13 @@ editor.on("change", function () {
 });
 
 function updatePreview() {
+    var data = editor.getValue();
+    var matches = data.match(/createCanvas\((.*),(.*)\)/);
+    var canvasWidth = matches && matches[1] ? matches[1] : 100;
+    var canvasHeight = matches && matches[2] ? matches[2] : 100;
     var previewFrame = document.getElementById('preview');
+    previewFrame.style.width = canvasWidth + 'px';
+    previewFrame.style.height = canvasHeight + 'px';
     var preview = previewFrame.contentDocument || previewFrame.contentWindow.document;
     var location = previewFrame.location || previewFrame.contentLocation || previewFrame.contentWindow.location;
     location.reload();
