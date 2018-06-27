@@ -16,3 +16,6 @@ Route::get('/', function () {
 });
 
 Route::get('p/{name}', 'PasteController');
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
